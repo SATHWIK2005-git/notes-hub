@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Notes - Student Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #51cf66;
+            --danger: #ff6b6b;
+            --warning: #ffd93d;
+            --light: #f8f9fa;
+            --dark: #333;
+            --border: #e9ecef;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .file-drop {
+            border: 3px dashed var(--primary);
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            background: rgba(102, 126, 234, 0.05);
+            transition: all 0.3s;
+        }
+
+        .file-drop:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: var(--secondary);
+        }
+
+        .file-drop.dragover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: var(--secondary);
+            transform: scale(1.02);
+        }
+
+        .file-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .file-name {
+            margin-top: 15px;
+            padding: 10px;
+            background: var(--success);
+            color: white;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .file-name.show {
+            display: block;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+            border: 2px solid var(--border);
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .stats-item {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stats-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #999;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .recent-notes {
+            background: var(--light);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .note-item {
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .note-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .note-meta {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+            margin-right: 5px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .file-drop {
+                padding: 25px;
+            }
+
+            .file-icon {
+                font-size: 2rem;
+            }
+        }
+
+        .link {
+            color: var(--primary);
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .category-option {
+            padding: 10px;
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .category-option:hover {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .category-option input {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Upload Study Notes</h1>
+            <p>Share your notes with other students</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('upload')">📤 Upload Notes</button>
+            <button class="tab" onclick="switchTab('browse')">📖 Browse Notes</button>
+            <button class="tab" onclick="switchTab('faq')">❓ Help</button>
+        </div>
+
+        <!-- Upload Tab -->
+        <div id="upload" class="tab-content active">
+            <div class="content">
+                <div class="card">
+                    <h2>Ready to Upload?</h2>
+
+                    <div id="authMessage" class="message info" style="display: block;">
+                        ⓘ Login required - <span class="link" onclick="goToLogin()">Click here to login or register</span>
+                    </div>
+
+                    <div id="successMessage" class="message success"></div>
+                    <div id="errorMessage" class="message error"></div>
+
+                    <form id="uploadForm" style="display: none;">
+                        <div class="form-group">
+                            <label for="noteTitle">📝 Note Title *</label>
+                            <input type="text" id="noteTitle" placeholder="e.g., Chapter 5 - Calculus Notes" required>
+                            <div class="helper-text">Make it clear and descriptive</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="noteCategory">📂 Subject Category *</label>
+                            <select id="noteCategory" required></select>
+                            <div class="helper-text">Choose the most relevant category</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="noteDescription">📄 Description</label>
+                            <textarea id="noteDescription" placeholder="What topics does this note cover? Any special tips?"></textarea>
+                            <div class="helper-text">Optional but helps other students</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>📎 Upload File *</label>
+                            <div class="file-drop" id="fileDrop">
+                                <div class="file-icon">📁</div>
+                                <div><strong>Click to select file</strong></div>
+                                <div style="font-size: 12px; color: #999; margin-top: 5px;">or drag & drop here</div>
+                            </div>
+                            <input type="file" id="noteFile" accept=".pdf,.doc,.docx,.txt" style="display: none;" required>
+                            <div class="file-name" id="fileName"></div>
+                            <div class="helper-text">Supported: PDF, DOC, DOCX, TXT (Max 20MB)</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="submitBtn">
+                            <span class="loading" id="loadingSpinner" style="display: none;"></span>
+                            ✅ Upload Note
+                        </button>
+
+                        <button type="reset" class="btn btn-secondary">↺ Clear Form</button>
+                    </form>
+
+                    <div id="noAuthCard" style="text-align: center;">
+                        <p style="color: #666; margin-bottom: 20px;">You need to login first to upload notes</p>
+                        <button class="btn btn-primary" onclick="goToLogin()">🔐 Go to Login</button>
+                        <p style="margin-top: 15px; font-size: 14px; color: #999;">
+                            Don't have an account? <span class="link" onclick="goToPortal()">Register now</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>ℹ️ Quick Tips</h2>
+
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div>
+                            <strong>✓ Clear Titles</strong>
+                            <p style="font-size: 14px; color: #666; margin-top: 5px;">Use descriptive titles like "Midterm Review" or "Chapter 3 Summary"</p>
+                        </div>
+
+                        <div>
+                            <strong>✓ Good Descriptions</strong>
+                            <p style="font-size: 14px; color: #666; margin-top: 5px;">Mention key topics covered to help students find relevant notes</p>
+                        </div>
+
+                        <div>
+                            <strong>✓ Right Format</strong>
+                            <p style="font-size: 14px; color: #666; margin-top: 5px;">Use PDF for best compatibility. Images should be clear and readable</p>
+                        </div>
+
+                        <div>
+                            <strong>✓ Organized Content</strong>
+                            <p style="font-size: 14px; color: #666; margin-top: 5px;">Well-organized notes get better ratings and more downloads</p>
+                        </div>
+
+                        <div style="background: rgba(255, 217, 61, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid var(--warning);">
+                            <strong>⚠️ Important</strong>
+                            <p style="font-size: 14px; margin-top: 5px;">Only upload notes you created or have permission to share. Respect copyright!</p>
+                        </div>
+
+                        <div id="uploadStats" class="stats" style="display: none;">
+                            <div class="stats-item" id="totalNotes">0</div>
+                            <div class="stats-label">Notes Uploaded</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Browse Tab -->
+        <div id="browse" class="tab-content">
+            <div class="card">
+                <h2>📖 All Shared Notes</h2>
+
+                <input type="text" id="searchInput" placeholder="Search notes..." style="margin-bottom: 15px;">
+
+                <div id="notesList" style="display: grid; gap: 15px;"></div>
+                <div id="noNotes" style="text-align: center; padding: 40px; color: #999;">
+                    📭 No notes found. Be the first to upload!
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Tab -->
+        <div id="faq" class="tab-content">
+            <div class="card">
+                <h2>❓ Frequently Asked Questions</h2>
+
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <div>
+                        <h3 style="color: var(--primary); margin-bottom: 8px;">How do I upload notes?</h3>
+                        <p style="color: #666;">1. Login to your account 2. Go to "Upload Notes" tab 3. Fill in title & category 4. Select file 5. Click Upload</p>
+                    </div>
+
+                    <div>
+                        <h3 style="color: var(--primary); margin-bottom: 8px;">What file types are allowed?</h3>
+                        <p style="color: #666;">PDF, DOC, DOCX, and TXT files up to 20MB. PDF is recommended for best compatibility.</p>
+                    </div>
+
+                    <div>
+                        <h3 style="color: var(--primary); margin-bottom: 8px;">Can I edit notes after uploading?</h3>
+                        <p style="color: #666;">Currently, you can view your uploads in your profile. To edit, please re-upload a corrected version.</p>
+                    </div>
+
+                    <div>
+                        <h3 style="color: var(--primary); margin-bottom: 8px;">What are categories for?</h3>
+                        <p style="color: #666;">Categories help organize notes by subject. Choose the most relevant one so students can find your notes easily.</p>
+                    </div>
+
+                    <div>
+                        <h3 style="color: var(--primary); margin-bottom: 8px;">How do I download notes from others?</h3>
+                        <p style="color: #666;">Click on any note in the "Browse" tab, read reviews, and click the download button.</p>
+                    </div>
+
+                    <div>
+                        <h3 style="color: var(--primary); margin-bottom: 8px;">Is there a limit on uploads?</h3>
+                        <p style="color: #666;">No limit! Upload as many notes as you want. The more you share, the more the community grows!</p>
+                    </div>
+
+                    <div style="background: #d1ecf1; padding: 15px; border-radius: 8px; border-left: 4px solid #0c5460;">
+                        <strong style="color: #0c5460;">💡 Pro Tip</strong>
+                        <p style="margin-top: 5px; color: #0c5460;">Well-written, organized notes get better ratings and more downloads. Make your submissions count!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px; color: white;">
+            <p>Go to <span class="link" onclick="goToPortal()" style="color: white; text-decoration: underline;">Full Portal</span> to browse and rate notes</p>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        // Backend API configuration
+        const API_BASE = 'http://localhost:3001';
+        
+        let currentUser = null;
+        let categories = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadCategories();
+            setupFileUpload();
+            await loadAllNotes();
+
+            document.getElementById('uploadForm')?.addEventListener('submit', handleUpload);
+            document.getElementById('searchInput')?.addEventListener('input', searchNotes);
+        });
+
+        async function checkAuth() {
+            try {
+                const res = await fetch(API_BASE + '/api/student/check-auth', { credentials: 'include' });
+                const data = await res.json();
+
+                if (data.authenticated) {
+                    currentUser = data;
+                    document.getElementById('uploadForm').style.display = 'block';
+                    document.getElementById('noAuthCard').style.display = 'none';
+                    document.getElementById('authMessage').style.display = 'none';
+                    loadUserStats();
+                } else {
+                    document.getElementById('uploadForm').style.display = 'none';
+                    document.getElementById('noAuthCard').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                const res = await fetch(API_BASE + '/api/notes/categories', { credentials: 'include' });
+                const data = await res.json();
+
+                if (data.success) {
+                    categories = data.categories;
+                    const select = document.getElementById('noteCategory');
+                    
+                    categories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat.id;
+                        option.textContent = `${cat.icon} ${cat.name}`;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+            }
+        }
+
+        function setupFileUpload() {
+            const fileDrop = document.getElementById('fileDrop');
+            const fileInput = document.getElementById('noteFile');
+
+            fileDrop.addEventListener('click', () => fileInput.click());
+
+            fileDrop.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileDrop.classList.add('dragover');
+            });
+
+            fileDrop.addEventListener('dragleave', () => {
+                fileDrop.classList.remove('dragover');
+            });
+
+            fileDrop.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileDrop.classList.remove('dragover');
+                fileInput.files = e.dataTransfer.files;
+                updateFileName();
+            });
+
+            fileInput.addEventListener('change', updateFileName);
+        }
+
+        function updateFileName() {
+            const file = document.getElementById('noteFile')?.files[0];
+            const fileName = document.getElementById('fileName');
+
+            if (file) {
+                const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+                fileName.textContent = `✓ ${file.name} (${sizeMB}MB)`;
+                fileName.classList.add('show');
+            } else {
+                fileName.classList.remove('show');
+            }
+        }
+
+        async function handleUpload(e) {
+            e.preventDefault();
+
+            if (!currentUser) {
+                showMessage('errorMessage', 'Please login first!');
+                return;
+            }
+
+            const file = document.getElementById('noteFile').files[0];
+            if (!file) {
+                showMessage('errorMessage', 'Please select a file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('noteFile', file);
+            formData.append('title', document.getElementById('noteTitle').value);
+            formData.append('description', document.getElementById('noteDescription').value);
+            formData.append('categoryId', document.getElementById('noteCategory').value);
+
+            showLoadingState(true);
+
+            try {
+                const res = await fetch(API_BASE + '/api/notes/upload', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    showMessage('successMessage', '✅ Note uploaded successfully!');
+                    document.getElementById('uploadForm').reset();
+                    document.getElementById('fileName').classList.remove('show');
+                    loadUserStats();
+                    setTimeout(() => loadAllNotes(), 1000);
+                } else {
+                    showMessage('errorMessage', '❌ ' + (data.error || 'Upload failed'));
+                }
+            } catch (error) {
+                showMessage('errorMessage', '❌ Error: ' + error.message);
+            } finally {
+                showLoadingState(false);
+            }
+        }
+
+        async function loadUserStats() {
+            if (!currentUser) return;
+
+            try {
+                const res = await fetch(API_BASE + `/api/student/${currentUser.studentId}/notes`, { credentials: 'include' });
+                const data = await res.json();
+
+                if (data.success) {
+                    document.getElementById('uploadStats').style.display = 'block';
+                    document.getElementById('totalNotes').textContent = data.notes.length;
+                }
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        async function loadAllNotes() {
+            try {
+                const cats = [1, 2, 3]; // Get first few categories
+                let allNotes = [];
+
+                for (let catId of cats) {
+                    const res = await fetch(API_BASE + `/api/notes/category/${catId}`, { credentials: 'include' });
+                    const data = await res.json();
+                    if (data.success) {
+                        allNotes = [...allNotes, ...data.notes];
+                    }
+                }
+
+                displayNotes(allNotes);
+            } catch (error) {
+                console.error('Failed to load notes:', error);
+            }
+        }
+
+        async function searchNotes(e) {
+            const query = e.target.value;
+            if (query.length < 2) {
+                await loadAllNotes();
+                return;
+            }
+
+            try {
+                const res = await fetch(API_BASE + `/api/notes/search?q=${encodeURIComponent(query)}`, { credentials: 'include' });
+                const data = await res.json();
+
+                if (data.success) {
+                    displayNotes(data.notes);
+                }
+            } catch (error) {
+                console.error('Search failed:', error);
+            }
+        }
+
+        function displayNotes(notes) {
+            const container = document.getElementById('notesList');
+            const noNotes = document.getElementById('noNotes');
+
+            if (!notes || notes.length === 0) {
+                container.innerHTML = '';
+                noNotes.style.display = 'block';
+                return;
+            }
+
+            noNotes.style.display = 'none';
+            container.innerHTML = notes.map(note => `
+                <div class="note-item">
+                    <div class="note-title">${note.title}</div>
+                    <div class="note-meta">
+                        📝 By ${note.uploaderName} • ${note.categoryName} • ${new Date(note.createdAt).toLocaleDateString()}
+                    </div>
+                    <div style="margin-top: 8px; font-size: 13px;">
+                        ⭐ ${note.rating > 0 ? note.rating.toFixed(1) + '/5' : 'Not rated'} | 
+                        ⬇️ ${note.downloads} downloads | 
+                        💬 ${note.reviewCount} reviews
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showMessage(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 4000);
+        }
+
+        function showLoadingState(loading) {
+            const spinner = document.getElementById('loadingSpinner');
+            const btn = document.getElementById('submitBtn');
+            
+            if (loading) {
+                spinner.style.display = 'inline-block';
+                btn.disabled = true;
+                btn.textContent = '⏳ Uploading...';
+            } else {
+                spinner.style.display = 'none';
+                btn.disabled = false;
+                btn.textContent = '✅ Upload Note';
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            event.target.classList.add('active');
+            document.getElementById(tab).classList.add('active');
+        }
+
+        function goToPortal() {
+            window.location.href = '/portal.html';
+        }
+
+        function goToLogin() {
+            window.location.href = '/portal.html?tab=auth';
+        }
+    </script>
+</body>
+</html>

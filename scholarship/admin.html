@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Scholarship Applications</title>
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-box">
+            <h1>🔐 Admin Login</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn-primary">Login</button>
+                <div id="loginError" class="error-message"></div>
+            </form>
+            <p class="login-note">Default credentials: admin / admin123</p>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="dashboard" style="display: none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="header-content">
+                <h1>📋 Scholarship Admin Panel</h1>
+                <div class="header-actions">
+                    <span id="adminUsername" class="username"></span>
+                    <button id="logoutBtn" class="btn-secondary">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Statistics Cards -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-info">
+                    <h3 id="totalApps">0</h3>
+                    <p>Total Applications</p>
+                </div>
+            </div>
+            <div class="stat-card pending">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-info">
+                    <h3 id="pendingApps">0</h3>
+                    <p>Pending Review</p>
+                </div>
+            </div>
+            <div class="stat-card approved">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <h3 id="approvedApps">0</h3>
+                    <p>Approved</p>
+                </div>
+            </div>
+            <div class="stat-card rejected">
+                <div class="stat-icon">❌</div>
+                <div class="stat-info">
+                    <h3 id="rejectedApps">0</h3>
+                    <p>Rejected</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎓</div>
+                <div class="stat-info">
+                    <h3 id="totalStudents">0</h3>
+                    <p>Total Students</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-info">
+                    <h3 id="totalNotes">0</h3>
+                    <p>Total Notes</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💬</div>
+                <div class="stat-info">
+                    <h3 id="totalReviews">0</h3>
+                    <p>Total Reviews</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <label for="statusFilter">Filter by Status:</label>
+            <select id="statusFilter">
+                <option value="all">All Applications</option>
+                <option value="pending">Pending</option>
+                <option value="under_review">Under Review</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+            </select>
+            <button id="refreshBtn" class="btn-refresh">🔄 Refresh</button>
+        </div>
+
+        <div class="filters">
+            <button id="tabApplications" class="btn-secondary">Applications</button>
+            <button id="tabStudents" class="btn-secondary">Registered Students</button>
+            <button id="tabNotes" class="btn-secondary">Uploaded Notes</button>
+            <button id="tabReviews" class="btn-secondary">Note Reviews</button>
+        </div>
+
+        <!-- Applications Table -->
+        <div id="applicationsSection" class="table-container">
+            <table id="applicationsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Institution</th>
+                        <th>GPA</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="applicationsBody">
+                    <tr>
+                        <td colspan="8" class="loading">Loading applications...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Students Table -->
+        <div id="studentsSection" class="table-container" style="display:none;">
+            <table id="studentsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Institution</th>
+                        <th>Program</th>
+                        <th>Year</th>
+                        <th>Registered</th>
+                    </tr>
+                </thead>
+                <tbody id="studentsBody">
+                    <tr>
+                        <td colspan="7" class="loading">Loading students...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Notes Table -->
+        <div id="notesSection" class="table-container" style="display:none;">
+            <table id="notesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Uploader</th>
+                        <th>Rating</th>
+                        <th>Downloads</th>
+                        <th>Uploaded</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="notesBody">
+                    <tr>
+                        <td colspan="8" class="loading">Loading notes...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Reviews Table -->
+        <div id="reviewsSection" class="table-container" style="display:none;">
+            <table id="reviewsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Note</th>
+                        <th>Category</th>
+                        <th>Reviewer</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody id="reviewsBody">
+                    <tr>
+                        <td colspan="7" class="loading">Loading reviews...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Application Detail Modal -->
+    <div id="detailModal" class="modal">
+        <div class="modal-content large">
+            <span class="close">&times;</span>
+            <h2>Application Details</h2>
+            <div id="applicationDetail"></div>
+            <div class="modal-actions">
+                <button class="btn-danger" onclick="deleteApplication()">Delete Application</button>
+                <button class="btn-secondary" onclick="closeDetailModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>

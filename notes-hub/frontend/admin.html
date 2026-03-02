@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Notes Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #51cf66;
+            --danger: #ff6b6b;
+            --warning: #ffd93d;
+            --light: #f8f9fa;
+            --dark: #333;
+            --border: #e9ecef;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        /* Login Page */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        .login-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-error {
+            background: #ffe0e0;
+            color: var(--danger);
+        }
+
+        /* Dashboard */
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .dashboard-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .dashboard-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-card .icon {
+            font-size: 2.5rem;
+        }
+
+        .stat-card .info h3 {
+            font-size: 2rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-card .info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .tab-btn {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Table */
+        .data-table {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h2 {
+            font-size: 1.3rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .search-box input {
+            padding: 0.6rem 1rem;
+            border: 2px solid var(--border);
+            border-radius: 5px;
+            min-width: 250px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--light);
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            font-weight: 600;
+            color: #666;
+        }
+
+        td {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4f4dd;
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: #fff4cc;
+            color: #d97706;
+        }
+
+        .badge-danger {
+            background: #ffe0e0;
+            color: var(--danger);
+        }
+
+        .actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .action-view {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .action-edit {
+            background: #fff4cc;
+            color: #d97706;
+        }
+
+        .action-delete {
+            background: #ffe0e0;
+            color: var(--danger);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h3 {
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 1rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-row strong {
+            color: #666;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-box">
+            <h2>🛡️ Admin Login</h2>
+            <div id="loginError" class="alert alert-error" style="display: none;"></div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="adminUsername" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <div class="dashboard-header">
+            <h1>📊 Notes Hub Admin Dashboard</h1>
+            <div class="user-info">
+                <span id="adminName">Admin</span>
+                <button class="btn btn-sm btn-danger" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="dashboard-content">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">👥</div>
+                    <div class="info">
+                        <h3 id="totalStudents">0</h3>
+                        <p>Total Students</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📝</div>
+                    <div class="info">
+                        <h3 id="totalNotes">0</h3>
+                        <p>Total Notes</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">💬</div>
+                    <div class="info">
+                        <h3 id="totalReviews">0</h3>
+                        <p>Total Reviews</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📥</div>
+                    <div class="info">
+                        <h3 id="totalDownloads">0</h3>
+                        <p>Total Downloads</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('students')">Students</button>
+                <button class="tab-btn" onclick="switchTab('notes')">Notes</button>
+                <button class="tab-btn" onclick="switchTab('reviews')">Reviews</button>
+            </div>
+
+            <!-- Students Tab -->
+            <div id="studentsTab" class="tab-content active">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h2>Registered Students</h2>
+                        <div class="search-box">
+                            <input type="text" placeholder="Search students..." id="studentSearch" oninput="searchStudents()">
+                        </div>
+                    </div>
+                    <div id="studentsTableContainer"></div>
+                </div>
+            </div>
+
+            <!-- Notes Tab -->
+            <div id="notesTab" class="tab-content">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h2>Uploaded Notes</h2>
+                        <div class="search-box">
+                            <input type="text" placeholder="Search notes..." id="noteSearch" oninput="searchNotes()">
+                        </div>
+                    </div>
+                    <div id="notesTableContainer"></div>
+                </div>
+            </div>
+
+            <!-- Reviews Tab -->
+            <div id="reviewsTab" class="tab-content">
+                <div class="data-table">
+                    <div class="table-header">
+                        <h2>Note Reviews</h2>
+                        <div class="search-box">
+                            <input type="text" placeholder="Search reviews..." id="reviewSearch" oninput="searchReviews()">
+                        </div>
+                    </div>
+                    <div id="reviewsTableContainer"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Note Details Modal -->
+    <div id="noteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Note Details</h3>
+                <button class="close-btn" onclick="closeModal('noteModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="noteDetails"></div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm" id="deleteNoteBtn">Delete Note</button>
+                <button class="btn btn-sm" onclick="closeModal('noteModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Details Modal -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Student Details</h3>
+                <button class="close-btn" onclick="closeModal('studentModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="studentDetails"></div>
+            <div class="modal-footer">
+                <button class="btn btn-sm" onclick="closeModal('studentModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        const API_BASE = 'http://localhost:3001';
+        let currentAdmin = null;
+        let allStudents = [];
+        let allNotes = [];
+        let allReviews = [];
+
+        // Check if already logged in
+        checkAuth();
+
+        async function checkAuth() {
+            try {
+                const res = await fetch(API_BASE + '/api/admin/check-auth', { credentials: 'include' });
+                const data = await res.json();
+                
+                if (data.authenticated) {
+                    currentAdmin = data;
+                    showDashboard();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+            }
+        }
+
+        // Login
+        document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            try {
+                const res = await fetch(API_BASE + '/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    currentAdmin = { username };
+                    showDashboard();
+                } else {
+                    errorDiv.textContent = data.error || 'Login failed';
+                    errorDiv.style.display = 'block';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Connection error. Please try again.';
+                errorDiv.style.display = 'block';
+            }
+        });
+
+        function showDashboard() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            document.getElementById('adminName').textContent = currentAdmin.username || 'Admin';
+            loadDashboardData();
+        }
+
+        async function loadDashboardData() {
+            await Promise.all([
+                loadStatistics(),
+                loadStudents(),
+                loadNotes(),
+                loadReviews()
+            ]);
+        }
+
+        async function loadStatistics() {
+            try {
+                const res = await fetch(API_BASE + '/api/admin/statistics', { credentials: 'include' });
+                const stats = await res.json();
+                
+                document.getElementById('totalStudents').textContent = stats.totalStudents || 0;
+                document.getElementById('totalNotes').textContent = stats.totalNotes || 0;
+                document.getElementById('totalReviews').textContent = stats.totalReviews || 0;
+                document.getElementById('totalDownloads').textContent = stats.totalDownloads || 0;
+            } catch (error) {
+                console.error('Failed to load statistics:', error);
+            }
+        }
+
+        async function loadStudents() {
+            const container = document.getElementById('studentsTableContainer');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading students...</div>';
+
+            try {
+                const res = await fetch(API_BASE + '/api/admin/students', { credentials: 'include' });
+                const data = await res.json();
+                
+                if (data.success) {
+                    allStudents = data.students;
+                    displayStudents(allStudents);
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Failed to load students</p></div>';
+            }
+        }
+
+        function displayStudents(students) {
+            const container = document.getElementById('studentsTableContainer');
+            
+            if (students.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">👥</div><p>No students registered yet</p></div>';
+                return;
+            }
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Institution</th>
+                            <th>Program</th>
+                            <th>Joined</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${students.map(student => `
+                            <tr>
+                                <td>${student.id}</td>
+                                <td>${student.fullName}</td>
+                                <td>${student.email}</td>
+                                <td>${student.institution || 'N/A'}</td>
+                                <td>${student.program || 'N/A'}</td>
+                                <td>${new Date(student.createdAt).toLocaleDateString()}</td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="action-btn action-view" onclick="viewStudent(${student.id})">View</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        async function loadNotes() {
+            const container = document.getElementById('notesTableContainer');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading notes...</div>';
+
+            try {
+                const res = await fetch(API_BASE + '/api/admin/notes', { credentials: 'include' });
+                const data = await res.json();
+                
+                if (data.success) {
+                    allNotes = data.notes;
+                    displayNotes(allNotes);
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Failed to load notes</p></div>';
+            }
+        }
+
+        function displayNotes(notes) {
+            const container = document.getElementById('notesTableContainer');
+            
+            if (notes.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📝</div><p>No notes uploaded yet</p></div>';
+                return;
+            }
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Uploader</th>
+                            <th>Rating</th>
+                            <th>Downloads</th>
+                            <th>Size</th>
+                            <th>Uploaded</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${notes.map(note => `
+                            <tr>
+                                <td>${note.id}</td>
+                                <td>${note.title}</td>
+                                <td><span class="badge badge-success">${note.categoryName}</span></td>
+                                <td>${note.uploaderName}</td>
+                                <td>⭐ ${note.rating ? note.rating.toFixed(1) : '0.0'} (${note.reviewCount || 0})</td>
+                                <td>📥 ${note.downloadCount || 0}</td>
+                                <td>${formatFileSize(note.fileSize)}</td>
+                                <td>${new Date(note.uploadedAt).toLocaleDateString()}</td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="action-btn action-view" onclick="viewNote(${note.id})">View</button>
+                                        <button class="action-btn action-delete" onclick="confirmDeleteNote(${note.id}, '${note.title.replace(/'/g, "\\'")}')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        async function loadReviews() {
+            const container = document.getElementById('reviewsTableContainer');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>Loading reviews...</div>';
+
+            try {
+                const res = await fetch(API_BASE + '/api/admin/reviews', { credentials: 'include' });
+                const data = await res.json();
+                
+                if (data.success) {
+                    allReviews = data.reviews;
+                    displayReviews(allReviews);
+                }
+            } catch (error) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><p>Failed to load reviews</p></div>';
+            }
+        }
+
+        function displayReviews(reviews) {
+            const container = document.getElementById('reviewsTableContainer');
+            
+            if (reviews.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">💬</div><p>No reviews submitted yet</p></div>';
+                return;
+            }
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Note</th>
+                            <th>Reviewer</th>
+                            <th>Rating</th>
+                            <th>Comment</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${reviews.map(review => `
+                            <tr>
+                                <td>${review.id}</td>
+                                <td>${review.noteTitle}</td>
+                                <td>${review.reviewerName}</td>
+                                <td>${'⭐'.repeat(review.rating)}</td>
+                                <td>${review.comment || '<em>No comment</em>'}</td>
+                                <td>${new Date(review.createdAt).toLocaleDateString()}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+
+        async function viewStudent(id) {
+            const student = allStudents.find(s => s.id === id);
+            if (!student) return;
+
+            const html = `
+                <div class="info-row"><strong>ID:</strong> <span>${student.id}</span></div>
+                <div class="info-row"><strong>Name:</strong> <span>${student.fullName}</span></div>
+                <div class="info-row"><strong>Email:</strong> <span>${student.email}</span></div>
+                <div class="info-row"><strong>Phone:</strong> <span>${student.phone || 'N/A'}</span></div>
+                <div class="info-row"><strong>Institution:</strong> <span>${student.institution || 'N/A'}</span></div>
+                <div class="info-row"><strong>Program:</strong> <span>${student.program || 'N/A'}</span></div>
+                <div class="info-row"><strong>Year:</strong> <span>${student.year || 'N/A'}</span></div>
+                <div class="info-row"><strong>Bio:</strong> <span>${student.bio || 'N/A'}</span></div>
+                <div class="info-row"><strong>Joined:</strong> <span>${new Date(student.createdAt).toLocaleString()}</span></div>
+            `;
+
+            document.getElementById('studentDetails').innerHTML = html;
+            document.getElementById('studentModal').classList.add('active');
+        }
+
+        async function viewNote(id) {
+            const note = allNotes.find(n => n.id === id);
+            if (!note) return;
+
+            const html = `
+                <div class="info-row"><strong>ID:</strong> <span>${note.id}</span></div>
+                <div class="info-row"><strong>Title:</strong> <span>${note.title}</span></div>
+                <div class="info-row"><strong>Description:</strong> <span>${note.description || 'N/A'}</span></div>
+                <div class="info-row"><strong>Category:</strong> <span>${note.categoryName}</span></div>
+                <div class="info-row"><strong>Uploader:</strong> <span>${note.uploaderName} (${note.uploaderEmail})</span></div>
+                <div class="info-row"><strong>File:</strong> <span>${note.filePath}</span></div>
+                <div class="info-row"><strong>Size:</strong> <span>${formatFileSize(note.fileSize)}</span></div>
+                <div class="info-row"><strong>Type:</strong> <span>${note.fileType}</span></div>
+                <div class="info-row"><strong>Rating:</strong> <span>⭐ ${note.rating ? note.rating.toFixed(2) : '0.00'} (${note.reviewCount || 0} reviews)</span></div>
+                <div class="info-row"><strong>Downloads:</strong> <span>📥 ${note.downloadCount || 0}</span></div>
+                <div class="info-row"><strong>Uploaded:</strong> <span>${new Date(note.uploadedAt).toLocaleString()}</span></div>
+            `;
+
+            document.getElementById('noteDetails').innerHTML = html;
+            document.getElementById('deleteNoteBtn').onclick = () => confirmDeleteNote(note.id, note.title);
+            document.getElementById('noteModal').classList.add('active');
+        }
+
+        function confirmDeleteNote(id, title) {
+            if (confirm(`Are you sure you want to delete "${title}"?\n\nThis will permanently delete the note file and all associated reviews.`)) {
+                deleteNote(id);
+            }
+        }
+
+        async function deleteNote(id) {
+            try {
+                const res = await fetch(API_BASE + `/api/admin/notes/${id}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('Note deleted successfully!');
+                    closeModal('noteModal');
+                    await loadDashboardData();
+                } else {
+                    alert('Failed to delete note: ' + (data.error || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Error deleting note: ' + error.message);
+            }
+        }
+
+        function searchStudents() {
+            const query = document.getElementById('studentSearch').value.toLowerCase();
+            const filtered = allStudents.filter(s => 
+                s.fullName.toLowerCase().includes(query) ||
+                s.email.toLowerCase().includes(query) ||
+                (s.institution && s.institution.toLowerCase().includes(query))
+            );
+            displayStudents(filtered);
+        }
+
+        function searchNotes() {
+            const query = document.getElementById('noteSearch').value.toLowerCase();
+            const filtered = allNotes.filter(n => 
+                n.title.toLowerCase().includes(query) ||
+                n.categoryName.toLowerCase().includes(query) ||
+                n.uploaderName.toLowerCase().includes(query)
+            );
+            displayNotes(filtered);
+        }
+
+        function searchReviews() {
+            const query = document.getElementById('reviewSearch').value.toLowerCase();
+            const filtered = allReviews.filter(r => 
+                r.noteTitle.toLowerCase().includes(query) ||
+                r.reviewerName.toLowerCase().includes(query) ||
+                (r.comment && r.comment.toLowerCase().includes(query))
+            );
+            displayReviews(filtered);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        async function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                await fetch(API_BASE + '/api/admin/logout', { 
+                    method: 'POST',
+                    credentials: 'include' 
+                });
+                location.reload();
+            }
+        }
+
+        function formatFileSize(bytes) {
+            if (!bytes) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        // Close modals on outside click
+        window.onclick = (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        };
+    </script>
+</body>
+</html>

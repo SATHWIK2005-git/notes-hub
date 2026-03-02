@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal - Notes Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --success-color: #51cf66;
+            --danger-color: #ff6b6b;
+            --warning-color: #ffd93d;
+            --light-bg: #f8f9fa;
+            --dark-text: #333;
+            --border-color: #e9ecef;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .nav a:hover {
+            opacity: 0.8;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-bg);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Auth Forms */
+        .auth-container {
+            max-width: 400px;
+            margin: 3rem auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-tab {
+            flex: 1;
+            padding: 0.8rem;
+            background: var(--light-bg);
+            border: 2px solid transparent;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .form-tab.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .error-msg {
+            background: #ffe0e0;
+            color: var(--danger-color);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-msg.show {
+            display: block;
+        }
+
+        .success-msg {
+            background: #e0ffe0;
+            color: var(--success-color);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .success-msg.show {
+            display: block;
+        }
+
+        /* Dashboard */
+        .welcome-card {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        /* Notes Grid */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .note-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .note-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .note-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            padding: 1.5rem;
+        }
+
+        .note-category {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .note-body {
+            padding: 1.5rem;
+        }
+
+        .note-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark-text);
+        }
+
+        .note-uploader {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+
+        .note-description {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .note-stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 1rem 0;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            margin: 1rem 0;
+            font-size: 13px;
+        }
+
+        .note-rating {
+            color: var(--warning-color);
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .note-actions .btn {
+            flex: 1;
+            padding: 0.6rem;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 0.8rem;
+        }
+
+        .category-filter {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .category-tag {
+            padding: 0.5rem 1rem;
+            background: white;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .category-tag:hover,
+        .category-tag.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Upload Form */
+        .upload-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            border: 2px dashed var(--border-color);
+            border-radius: 5px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-input-wrapper:hover {
+            border-color: var(--primary-color);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 1rem;
+            color: var(--success-color);
+            font-weight: 600;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .modal-close:hover {
+            color: var(--dark-text);
+        }
+
+        .review-item {
+            background: var(--light-bg);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+
+        .review-author {
+            font-weight: 600;
+        }
+
+        .review-rating {
+            color: var(--warning-color);
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .star {
+            cursor: pointer;
+            color: #ccc;
+            transition: color 0.3s;
+        }
+
+        .star:hover,
+        .star.active {
+            color: var(--warning-color);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">📚 Notes Hub</div>
+            <div class="nav">
+                <a id="navAuth" onclick="showSection('auth')">Login</a>
+                <a id="navExplore" onclick="showSection('explore')" style="display:none;">Explore Notes</a>
+                <a id="navUpload" onclick="showSection('upload')" style="display:none;">Upload Notes</a>
+                <a id="navProfile" onclick="showSection('profile')" style="display:none;">My Profile</a>
+                <a id="navLogout" onclick="logout()" style="display:none;" class="btn btn-secondary">Logout</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Auth Section -->
+        <div id="auth" class="section active">
+            <div class="auth-container">
+                <div class="error-msg" id="authError"></div>
+                <div class="success-msg" id="authSuccess"></div>
+
+                <div class="form-tabs">
+                    <div class="form-tab active" onclick="switchTab('login')">Login</div>
+                    <div class="form-tab" onclick="switchTab('register')">Register</div>
+                </div>
+
+                <!-- Login Form -->
+                <form id="loginForm" style="display:block;">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">Login</button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="registerForm" style="display:none;">
+                    <div class="form-group">
+                        <label for="regName">Full Name</label>
+                        <input type="text" id="regName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email Address</label>
+                        <input type="email" id="regEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPhone">Phone Number</label>
+                        <input type="tel" id="regPhone">
+                    </div>
+                    <div class="form-group">
+                        <label for="regInstitution">Institution</label>
+                        <input type="text" id="regInstitution">
+                    </div>
+                    <div class="form-group">
+                        <label for="regProgram">Program/Major</label>
+                        <input type="text" id="regProgram">
+                    </div>
+                    <div class="form-group">
+                        <label for="regYear">Year of Study</label>
+                        <select id="regYear">
+                            <option value="">Select Year</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                            <option value="graduate">Graduate</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword2">Confirm Password</label>
+                        <input type="password" id="regPassword2" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;">Register</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Explore Notes Section -->
+        <div id="explore" class="section">
+            <h2>📖 Explore Notes</h2>
+            
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search notes by title, subject...">
+                <button class="btn btn-primary" onclick="searchNotes()">Search</button>
+            </div>
+
+            <div class="category-filter" id="categoryFilter"></div>
+
+            <div class="notes-grid" id="notesGrid"></div>
+            <div id="noNotes" style="text-align:center; padding:2rem; color:#888;">No notes found</div>
+        </div>
+
+        <!-- Upload Notes Section -->
+        <div id="upload" class="section">
+            <div class="upload-form">
+                <h2>📤 Upload Your Notes</h2>
+                <form id="uploadForm">
+                    <div class="error-msg" id="uploadError"></div>
+                    <div class="success-msg" id="uploadSuccess"></div>
+
+                    <div class="form-group">
+                        <label for="noteTitle">Note Title *</label>
+                        <input type="text" id="noteTitle" required placeholder="e.g., Chapter 5 - Calculus">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="noteDescription">Description</label>
+                        <textarea id="noteDescription" rows="3" placeholder="Describe what this note covers..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="noteCategory">Category *</label>
+                        <select id="noteCategory" required></select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Upload File (PDF, DOC, DOCX, TXT) *</label>
+                        <div class="file-input-wrapper" onclick="document.getElementById('noteFile').click()">
+                            <div>📎 Click to select file or drag & drop</div>
+                            <div class="file-name" id="fileName"></div>
+                        </div>
+                        <input type="file" id="noteFile" accept=".pdf,.doc,.docx,.txt" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-success" style="width:100%;">Upload Note</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Profile Section -->
+        <div id="profile" class="section">
+            <div style="max-width:600px; margin:0 auto;">
+                <h2>👤 My Profile</h2>
+                <div id="profileContent" style="background:white; padding:2rem; border-radius:10px; margin-top:1rem;"></div>
+                <div id="myNotesGrid" class="notes-grid" style="margin-top:2rem;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Note Details Modal -->
+    <div id="noteModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script>
+        // Backend API configuration
+        const API_BASE = 'http://localhost:3001';
+        
+        let currentUser = null;
+        let currentNote = null;
+        let allNotes = [];
+        let categories = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            await loadCategories();
+            
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('registerForm').addEventListener('submit', handleRegister);
+            document.getElementById('uploadForm').addEventListener('submit', handleUpload);
+            document.getElementById('searchInput').addEventListener('input', searchNotes);
+
+            // Drag & drop for file upload
+            const fileWrapper = document.querySelector('.file-input-wrapper');
+            fileWrapper.addEventListener('dragover', e => {
+                e.preventDefault();
+                fileWrapper.style.background = 'rgba(102, 126, 234, 0.1)';
+            });
+            fileWrapper.addEventListener('dragleave', () => {
+                fileWrapper.style.background = '';
+            });
+            fileWrapper.addEventListener('drop', e => {
+                e.preventDefault();
+                document.getElementById('noteFile').files = e.dataTransfer.files;
+                updateFileName();
+            });
+
+            document.getElementById('noteFile').addEventListener('change', updateFileName);
+        });
+
+        async function checkAuth() {
+            try {
+                const res = await fetch(API_BASE + '/api/student/check-auth', { credentials: 'include' });
+                const data = await res.json();
+                
+                if (data.authenticated) {
+                    currentUser = data;
+                    showAuthenticatedUI();
+                    loadNotes();
+                } else {
+                    showAuthUI();
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+            }
+        }
+
+        function showAuthUI() {
+            document.getElementById('navAuth').style.display = 'block';
+            document.getElementById('navExplore').style.display = 'none';
+            document.getElementById('navUpload').style.display = 'none';
+            document.getElementById('navProfile').style.display = 'none';
+            document.getElementById('navLogout').style.display = 'none';
+            showSection('auth');
+        }
+
+        function showAuthenticatedUI() {
+            document.getElementById('navAuth').style.display = 'none';
+            document.getElementById('navExplore').style.display = 'block';
+            document.getElementById('navUpload').style.display = 'block';
+            document.getElementById('navProfile').style.display = 'block';
+            document.getElementById('navLogout').style.display = 'block';
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+
+            if (sectionId === 'explore' && currentUser) {
+                loadNotes();
+            } else if (sectionId === 'profile' && currentUser) {
+                loadProfile();
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.form-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('form').forEach(f => f.style.display = 'none');
+
+            if (tab === 'login') {
+                document.querySelector('.form-tab:first-child').classList.add('active');
+                document.getElementById('loginForm').style.display = 'block';
+            } else {
+                document.querySelector('.form-tab:last-child').classList.add('active');
+                document.getElementById('registerForm').style.display = 'block';
+            }
+
+            document.getElementById('authError').classList.remove('show');
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const res = await fetch(API_BASE + '/api/student/login', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    currentUser = data;
+                    showAuthenticatedUI();
+                    showSection('explore');
+                    loadNotes();
+                    document.getElementById('loginForm').reset();
+                } else {
+                    showError('authError', data.error);
+                }
+            } catch (error) {
+                showError('authError', 'Login failed');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const fullName = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regPassword2').value;
+
+            try {
+                const res = await fetch(API_BASE + '/api/student/register', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fullName, email, password, confirmPassword,
+                        phone: document.getElementById('regPhone').value,
+                        institution: document.getElementById('regInstitution').value,
+                        program: document.getElementById('regProgram').value,
+                        year: document.getElementById('regYear').value
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    currentUser = data;
+                    showAuthenticatedUI();
+                    showSection('explore');
+                    loadNotes();
+                } else {
+                    showError('authError', data.error);
+                }
+            } catch (error) {
+                showError('authError', 'Registration failed');
+            }
+        }
+
+        async function handleUpload(e) {
+            e.preventDefault();
+
+            const fileInput = document.getElementById('noteFile');
+            if (!fileInput.files.length) {
+                showError('uploadError', 'Please select a file');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('noteFile', fileInput.files[0]);
+            formData.append('title', document.getElementById('noteTitle').value);
+            formData.append('description', document.getElementById('noteDescription').value);
+            formData.append('categoryId', document.getElementById('noteCategory').value);
+
+            try {
+                const res = await fetch(API_BASE + '/api/notes/upload', {
+                    method: 'POST',
+                    credentials: 'include',
+                    body: formData
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    showSuccess('uploadSuccess', 'Note uploaded successfully!');
+                    document.getElementById('uploadForm').reset();
+                    document.getElementById('fileName').textContent = '';
+                    setTimeout(() => showSection('explore'), 1500);
+                } else {
+                    showError('uploadError', data.error);
+                }
+            } catch (error) {
+                showError('uploadError', 'Upload failed');
+            }
+        }
+
+        async function loadCategories() {
+            try {
+                const res = await fetch(API_BASE + '/api/notes/categories', { credentials: 'include' });
+                const data = await res.json();
+
+                if (data.success) {
+                    categories = data.categories;
+                    
+                    // Populate category dropdown
+                    const categorySelect = document.getElementById('noteCategory');
+                    categories.forEach(cat => {
+                        const option = document.createElement('option');
+                        option.value = cat.id;
+                        option.textContent = `${cat.icon} ${cat.name}`;
+                        categorySelect.appendChild(option);
+                    });
+
+                    // Populate filter tags
+                    const filter = document.getElementById('categoryFilter');
+                    categories.forEach(cat => {
+                        const tag = document.createElement('div');
+                        tag.className = 'category-tag';
+                        tag.textContent = `${cat.icon} ${cat.name}`;
+                        tag.onclick = () => filterByCategory(cat.id, tag);
+                        filter.appendChild(tag);
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load categories:', error);
+            }
+        }
+
+        async function loadNotes() {
+            try {
+                const res = await fetch(API_BASE + '/api/notes/categories', { credentials: 'include' });
+                // Load first category
+                if (categories.length > 0) {
+                    const notesRes = await fetch(API_BASE + `/api/notes/category/${categories[0].id}`, { credentials: 'include' });
+                    const data = await notesRes.json();
+                    
+                    if (data.success) {
+                        allNotes = data.notes;
+                        displayNotes(allNotes);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load notes:', error);
+            }
+        }
+
+        async function searchNotes() {
+            const query = document.getElementById('searchInput').value;
+            if (query.length < 2) {
+                loadNotes();
+                return;
+            }
+
+            try {
+                const res = await fetch(API_BASE + `/api/notes/search?q=${encodeURIComponent(query)}`, { credentials: 'include' });
+                const data = await res.json();
+
+                if (data.success) {
+                    displayNotes(data.notes);
+                }
+            } catch (error) {
+                console.error('Search failed:', error);
+            }
+        }
+
+        async function filterByCategory(categoryId, tag) {
+            document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
+            tag.classList.add('active');
+
+            try {
+                const res = await fetch(API_BASE + `/api/notes/category/${categoryId}`, { credentials: 'include' });
+                const data = await res.json();
+
+                if (data.success) {
+                    displayNotes(data.notes);
+                }
+            } catch (error) {
+                console.error('Filter failed:', error);
+            }
+        }
+
+        function displayNotes(notes) {
+            const grid = document.getElementById('notesGrid');
+            const noNotes = document.getElementById('noNotes');
+
+            if (notes.length === 0) {
+                grid.innerHTML = '';
+                noNotes.style.display = 'block';
+                return;
+            }
+
+            noNotes.style.display = 'none';
+            grid.innerHTML = notes.map(note => `
+                <div class="note-card" onclick="viewNote(${note.id})">
+                    <div class="note-header">
+                        <div class="note-category">${note.categoryIcon || '📄'}</div>
+                        <div style="font-size:12px;">${note.categoryName}</div>
+                    </div>
+                    <div class="note-body">
+                        <div class="note-title">${note.title}</div>
+                        <div class="note-uploader">By ${note.uploaderName} • ${new Date(note.createdAt).toLocaleDateString()}</div>
+                        <div class="note-description">${(note.description || '').substring(0, 100)}...</div>
+                        <div class="note-stats">
+                            <span>⬇️ ${note.downloads} Downloads</span>
+                            <span class="note-rating">⭐ ${note.rating > 0 ? note.rating.toFixed(1) : 'Not rated'}</span>
+                            <span>💬 ${note.reviewCount} Reviews</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function viewNote(noteId) {
+            try {
+                const res = await fetch(API_BASE + `/api/notes/${noteId}`, { credentials: 'include' });
+                const data = await res.json();
+
+                if (data.success) {
+                    currentNote = data.note;
+                    showNoteModal(data.note, data.reviews);
+                }
+            } catch (error) {
+                console.error('Failed to load note:', error);
+            }
+        }
+
+        function showNoteModal(note, reviews) {
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+                <h2>${note.title}</h2>
+                <p style="color:#888; font-size:14px;">By <strong>${note.uploaderName}</strong> • ${note.categoryName} • ${new Date(note.createdAt).toLocaleDateString()}</p>
+                
+                <div style="background:#f8f9fa; padding:1rem; border-radius:5px; margin:1rem 0;">
+                    <p><strong>Description:</strong> ${note.description || 'No description'}</p>
+                    <p style="margin-top:0.5rem;">
+                        <span>📥 Downloads: ${note.downloads}</span> | 
+                        <span>⭐ Rating: ${note.rating > 0 ? note.rating.toFixed(1) + '/5' : 'Not rated'}</span> | 
+                        <span>💬 Reviews: ${note.reviewCount}</span>
+                    </p>
+                </div>
+
+                <button class="btn btn-success" style="width:100%; margin-bottom:1rem;" onclick="downloadNote(${note.id})">📥 Download Note</button>
+
+                <h3>Reviews & Ratings</h3>
+                <div id="reviewsList">
+                    ${reviews.length > 0 ? reviews.map(r => `
+                        <div class="review-item">
+                            <div class="review-header">
+                                <span class="review-author">${r.studentName}</span>
+                                <span class="review-rating">⭐ ${r.rating}/5</span>
+                            </div>
+                            <p>${r.comment || 'No comment'}</p>
+                            <small style="color:#888;">${new Date(r.createdAt).toLocaleDateString()}</small>
+                        </div>
+                    `).join('') : '<p style="color:#888;">No reviews yet</p>'}
+                </div>
+
+                ${currentUser ? `
+                    <h3 style="margin-top:2rem;">Add Your Review</h3>
+                    <div class="rating-input" id="ratingInput">
+                        ${[1,2,3,4,5].map(i => `<span class="star" onclick="setRating(${i})" data-value="${i}">★</span>`).join('')}
+                    </div>
+                    <textarea id="reviewComment" rows="3" placeholder="Share your thoughts about this note..." style="margin-bottom:1rem;"></textarea>
+                    <button class="btn btn-primary" style="width:100%;" onclick="submitReview(${note.id})">Submit Review</button>
+                ` : '<p style="margin-top:2rem; color:#888;"><a href="#" onclick="showSection(\'auth\')">Login to add a review</a></p>'}
+            `;
+            document.getElementById('noteModal').classList.add('show');
+        }
+
+        async function downloadNote(noteId) {
+            window.location.href = API_BASE + `/api/notes/${noteId}/download`;
+        }
+
+        function setRating(value) {
+            document.querySelectorAll('#ratingInput .star').forEach((star, i) => {
+                star.classList.toggle('active', i < value);
+            });
+        }
+
+        async function submitReview(noteId) {
+            const rating = document.querySelectorAll('#ratingInput .star.active').length;
+            const comment = document.getElementById('reviewComment').value;
+
+            if (!rating) {
+                alert('Please select a rating');
+                return;
+            }
+
+            try {
+                const res = await fetch(API_BASE + `/api/notes/${noteId}/review`, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rating, comment })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    alert('Review submitted successfully!');
+                    viewNote(noteId); // Reload note details
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Failed to submit review');
+            }
+        }
+
+        async function loadProfile() {
+            try {
+                const res = await fetch(API_BASE + `/api/student/profile/${currentUser.studentId}`, { credentials: 'include' });
+                const data = await res.json();
+
+                if (data.success) {
+                    const student = data.student;
+                    const profileContent = document.getElementById('profileContent');
+                    profileContent.innerHTML = `
+                        <div style="display:flex; gap:2rem; align-items:start;">
+                            <div style="flex:1;">
+                                <h3>${student.fullName}</h3>
+                                <p><strong>Email:</strong> ${student.email}</p>
+                                <p><strong>Phone:</strong> ${student.phone || 'N/A'}</p>
+                                <p><strong>Institution:</strong> ${student.institution || 'N/A'}</p>
+                                <p><strong>Program:</strong> ${student.program || 'N/A'}</p>
+                                <p><strong>Year:</strong> ${student.year || 'N/A'}</p>
+                                ${student.bio ? `<p><strong>Bio:</strong> ${student.bio}</p>` : ''}
+                                <p style="font-size:12px; color:#888; margin-top:1rem;">Joined ${new Date(student.createdAt).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                    `;
+
+                    // Load user's notes
+                    const notesRes = await fetch(`/api/student/${student.id}/notes`);
+                    const notesData = await notesRes.json();
+
+                    if (notesData.success && notesData.notes.length > 0) {
+                        const myNotesGrid = document.getElementById('myNotesGrid');
+                        myNotesGrid.innerHTML = notesData.notes.map(note => `
+                            <div class="note-card" onclick="viewNote(${note.id})">
+                                <div class="note-header">
+                                    <div class="note-category">${note.categoryIcon || '📄'}</div>
+                                    <div style="font-size:12px;">${note.categoryName}</div>
+                                </div>
+                                <div class="note-body">
+                                    <div class="note-title">${note.title}</div>
+                                    <div class="note-stats">
+                                        <span>⬇️ ${note.downloads}</span>
+                                        <span class="note-rating">⭐ ${note.rating > 0 ? note.rating.toFixed(1) : 'Not rated'}</span>
+                                        <span>💬 ${note.reviewCount}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load profile:', error);
+            }
+        }
+
+        function updateFileName() {
+            const file = document.getElementById('noteFile').files[0];
+            if (file) {
+                document.getElementById('fileName').textContent = `✓ ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('noteModal').classList.remove('show');
+        }
+
+        async function logout() {
+            await fetch(API_BASE + '/api/student/logout', { method: 'POST', credentials: 'include' });
+            currentUser = null;
+            showAuthUI();
+        }
+
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 4000);
+        }
+
+        function showSuccess(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 4000);
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('noteModal');
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

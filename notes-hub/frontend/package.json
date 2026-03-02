@@ -1,0 +1,16 @@
+{
+  "name": "notes-hub-frontend",
+  "version": "1.0.0",
+  "description": "Frontend for Student Notes Hub",
+  "main": "serve.js",
+  "scripts": {
+    "start": "node serve.js"
+  },
+  "keywords": [
+    "frontend",
+    "notes",
+    "student"
+  ],
+  "author": "",
+  "license": "MIT"
+}
