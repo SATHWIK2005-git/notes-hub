@@ -515,14 +515,19 @@ app.use((err, req, res, next) => {
     res.status(500).json({ success: false, error: err.message || 'Something went wrong!' });
 });
 
-// Initialize database and start server
-database.initialize().then(() => {
-    app.listen(PORT, () => {
-        console.log(`\n✓ Notes Hub API Server running on http://localhost:${PORT}`);
-        console.log(`✓ API Health: http://localhost:${PORT}/api/health`);
-        console.log(`✓ Ready to accept requests\n`);
+// Export app for use as middleware
+module.exports = app;
+
+// Only start server if run directly (not imported)
+if (require.main === module) {
+    database.initialize().then(() => {
+        app.listen(PORT, () => {
+            console.log(`\n✓ Notes Hub API Server running on http://localhost:${PORT}`);
+            console.log(`✓ API Health: http://localhost:${PORT}/api/health`);
+            console.log(`✓ Ready to accept requests\n`);
+        });
+    }).catch(err => {
+        console.error('Failed to initialize database:', err);
+        process.exit(1);
     });
-}).catch(err => {
-    console.error('Failed to initialize database:', err);
-    process.exit(1);
-});
+}
