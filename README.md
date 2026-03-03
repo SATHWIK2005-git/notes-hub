@@ -1,344 +1,196 @@
-# Scholarship Application Website
+# 📚 Notes Hub
 
-A complete, production-ready scholarship application portal with backend, database storage, email notifications, file upload handling, and a full-featured admin panel.
+A professional note-sharing platform where students can upload, browse, and review academic notes with a comprehensive admin panel for content management.
 
-## 🌟 Features
+## 🎯 Features
 
-### Frontend Features
-✅ **Beautiful Animated Background**
-- Gradient background with floating animated circles
-- Smooth animations and transitions
-- Fully responsive design
+### Student Portal
+- 📝 **Browse Notes** - Search and filter notes by category
+- ⭐ **Rate & Review** - Leave ratings and comments on notes
+- 📥 **Upload Notes** - Share your study materials with the community
+- 👤 **User Profile** - Manage your account and uploaded notes
+- 🔐 **Secure Login** - Password-protected student accounts
+- 📊 **Statistics** - Track popular notes and community insights
 
-✅ **Comprehensive Application Form**
-- Personal Information section
-- Academic Information section
-- Essay submission with character counter
-- File uploads (Transcript & Recommendation letter)
-- Extracurricular activities section
-- Real-time validation
+### Admin Dashboard
+- 🛡️ **Authentication** - Secure admin login system (admin/admin123)
+- 👥 **Student Management** - View all registered students
+- 📋 **Notes Management** - Review, moderate, and delete notes
+- ⭐ **Review Management** - Monitor student reviews and comments
+- 📈 **Statistics Dashboard** - Real-time analytics
+  - Total students
+  - Total notes uploaded
+  - Total reviews
+  - Total downloads
+- 🗑️ **Content Moderation** - Delete inappropriate notes
+- 🔍 **Search & Filter** - Find specific content quickly
 
-### Backend Features
-✅ **RESTful API Server**
-- Built with Node.js and Express
-- File upload handling with Multer
-- Session-based authentication
-- Secure password hashing with bcrypt
+### Technical Features
+- ✅ **Frontend/Backend Separation** - Professional architecture
+- ✅ **RESTful API** - Clean API endpoints
+- ✅ **SQLite Database** - Persistent data storage
+- ✅ **Session Authentication** - Secure user sessions
+- ✅ **CORS Enabled** - Cross-origin requests
+- ✅ **File Upload** - Multer integration for PDF/DOC files
+- ✅ **Responsive Design** - Mobile-friendly interface
+- ✅ **Real-time Updates** - Instant data loading
 
-✅ **Database Storage**
-- SQLite database for easy setup
-- Automatic schema creation
-- Stores all application data
-- Full CRUD operations
-
-✅ **Email Notifications**
-- Confirmation emails to applicants
-- Admin notifications for new applications
-- Status update emails (approval/rejection)
-- Beautiful HTML email templates
-- Fallback to console logging if email not configured
-
-✅ **Admin Panel**
-- Secure login system
-- Dashboard with statistics
-- View all applications
-- Filter by status
-- Approve/reject applications
-- View detailed application information
-- Download uploaded documents
-- Delete applications
-- Update application status
-
-## 📋 Files Structure
+## 📂 Project Structure
 
 ```
-website_details/
-├── index.html              # Main application form
-├── style.css               # Frontend styles
-├── script.js               # Frontend JavaScript
-├── admin.html              # Admin panel interface
-├── admin-style.css         # Admin panel styles
-├── admin-script.js         # Admin panel JavaScript
-├── server.js               # Express server
-├── database.js             # Database operations
-├── emailService.js         # Email functionality
-├── package.json            # NPM dependencies
-├── .env.example            # Environment variables template
-├── .gitignore              # Git ignore rules
-└── README.md               # This file
+notes-hub/
+├── frontend/
+│   ├── index.html           # Landing page
+│   ├── portal.html          # Student portal
+│   ├── upload.html          # Note upload page
+│   ├── admin.html           # Admin dashboard
+│   ├── serve.js             # Frontend server
+│   └── js/config.js         # API configuration
+├── backend/
+│   ├── server.js            # Express API server
+│   ├── database.js          # Database operations
+│   ├── package.json         # Dependencies
+│   └── uploads/             # Uploaded files
+└── ADMIN_GUIDE.md           # Admin panel documentation
 ```
 
-## 🚀 Installation & Setup
+## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js (version 14 or higher)
-- NPM (comes with Node.js)
+- Node.js (v14 or higher)
+- npm
 
-### Step 1: Install Node.js
-If you don't have Node.js installed:
-1. Download from https://nodejs.org/
-2. Install the LTS version
-3. Verify installation:
-   ```powershell
-   node --version
-   npm --version
-   ```
+### Installation
 
-### Step 2: Install Dependencies
-Open PowerShell in the project directory and run:
-```powershell
-npm install
+1. **Clone the repository**
+```bash
+git clone https://github.com/SATHWIK2005-git/Notes-Hub.git
+cd Notes-Hub
 ```
 
-This will install:
-- express (web server)
-- multer (file uploads)
-- sqlite3 (database)
-- bcrypt (password hashing)
-- express-session (session management)
-- nodemailer (email service)
-
-### Step 3: Configure Email (Optional)
-1. Copy `.env.example` to `.env`:
-   ```powershell
-   Copy-Item .env.example .env
-   ```
-
-2. Edit `.env` and add your email credentials:
-   - For Gmail, enable 2FA and create an App Password
-   - Update EMAIL_USER and EMAIL_PASSWORD
-
-**Note:** Email is optional. If not configured, notifications will be logged to the console.
-
-### Step 4: Start the Server
-```powershell
+2. **Backend Setup**
+```bash
+cd notes-hub/backend
+npm install
 npm start
 ```
+Backend runs on `http://localhost:3001`
 
-The server will start on http://localhost:3000
-
-## 📱 Usage
-
-### For Applicants
-1. Open http://localhost:3000/index.html
-2. Fill out the scholarship application form
-3. Upload required documents (PDF only, max 5MB)
-4. Submit the application
-5. Receive confirmation email
-
-### For Administrators
-1. Open http://localhost:3000/admin.html
-2. Login with default credentials:
-   - **Username:** admin
-   - **Password:** admin123
-3. View dashboard with statistics
-4. Review applications
-5. Approve or reject applications
-6. Download submitted documents
-
-## 🔐 Admin Panel Features
-
-### Dashboard Statistics
-- Total applications
-- Pending applications
-- Approved applications
-- Rejected applications
-
-### Application Management
-- **View:** See detailed application information
-- **Approve:** Approve applications and notify applicants
-- **Reject:** Reject applications with email notification
-- **Delete:** Remove applications from the database
-- **Filter:** Filter by status (all, pending, approved, rejected)
-- **Download:** Download uploaded PDF documents
-
-### Status Options
-- **Pending:** Initial status after submission
-- **Under Review:** Application is being reviewed
-- **Approved:** Application accepted
-- **Rejected:** Application not accepted
-
-## 📧 Email Notifications
-
-### Applicant Emails
-1. **Confirmation Email:** Sent immediately after submission
-2. **Status Update Email:** Sent when application is approved/rejected
-
-### Admin Emails
-1. **New Application Alert:** Sent when a new application is received
-
-### Email Templates
-All emails use professional HTML templates with:
-- Branded headers
-- Clear information
-- Action buttons
-- Professional footer
-
-## 🗄️ Database
-
-### Schema
-**Applications Table:**
-- id, fullName, email, phone, dob, address
-- institution, program, gpa, year
-- essay, activities
-- transcriptPath, recommendationPath
-- status, submittedAt, updatedAt
-
-**Admins Table:**
-- id, username, password (hashed)
-- email, createdAt
-
-### Database File
-- Located at: `scholarship.db`
-- Created automatically on first run
-- SQLite format (no installation required)
-
-## 🔧 API Endpoints
-
-### Public Endpoints
-- `POST /api/submit-application` - Submit scholarship application
-
-### Admin Endpoints (require authentication)
-- `POST /api/admin/login` - Admin login
-- `POST /api/admin/logout` - Admin logout
-- `GET /api/admin/check-auth` - Check authentication status
-- `GET /api/admin/applications` - Get all applications
-- `GET /api/admin/applications/:id` - Get single application
-- `PUT /api/admin/applications/:id/status` - Update status
-- `DELETE /api/admin/applications/:id` - Delete application
-- `GET /api/admin/download/:filename` - Download file
-- `GET /api/admin/statistics` - Get statistics
-
-## 🎨 Customization
-
-### Change Colors
-Edit `style.css` and `admin-style.css`:
-```css
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+3. **Frontend Setup** (in another terminal)
+```bash
+cd notes-hub/frontend
+npm install
+npm start
 ```
+Frontend runs on `http://localhost:3000`
 
-### Modify Form Fields
-Edit `index.html` to add/remove form fields.
+4. **Access the Application**
+- **Landing Page**: http://localhost:3000
+- **Student Portal**: http://localhost:3000/portal.html
+- **Upload Notes**: http://localhost:3000/upload.html
+- **Admin Panel**: http://localhost:3000/admin.html
+  - Username: `admin`
+  - Password: `admin123`
 
-### Adjust Validation Rules
-Edit `script.js`:
-- Essay minimum length
-- Age requirements
-- File size limits
-- GPA validation
+## 👨‍💻 Usage
 
-### Email Templates
-Edit `emailService.js` to customize email content and styling.
+### For Students
 
-### Change Admin Credentials
-After first login, you should:
-1. Connect to the database
-2. Update the admin password
-3. Or add new admin users
+1. **Register** at the portal with your details
+2. **Browse Notes** - Explore notes by category
+3. **Upload Notes** - Share your study materials
+4. **Rate & Review** - Give feedback on notes
+5. **Manage Profile** - Update your information
 
-## 🛡️ Security Features
+### For Admins
 
+1. **Login** at admin panel
+2. **Dashboard** - View platform statistics
+3. **Students Tab** - See all registered students
+4. **Notes Tab** - Review and moderate notes
+5. **Reviews Tab** - Check community feedback
+6. **Actions** - Delete inappropriate content
+
+## 🔐 Security
+
+- Passwords hashed with bcrypt
 - Session-based authentication
-- Password hashing with bcrypt
-- File type validation (PDF only)
-- File size limits (5MB)
-- SQL injection prevention with parameterized queries
-- XSS protection with proper HTML escaping
-- CSRF protection via sessions
+- Protected admin routes
+- CORS configuration
+- Input validation on frontend and backend
 
-## 📱 Browser Compatibility
+## 📊 Database Schema
 
-- ✅ Chrome/Edge (latest)
-- ✅ Firefox (latest)
-- ✅ Safari (latest)
-- ✅ Mobile browsers (iOS/Android)
+### Tables
+- **students** - Student profiles and authentication
+- **notes** - Uploaded notes metadata
+- **note_categories** - Note categories (Math, CS, Physics, etc.)
+- **note_reviews** - Student reviews and ratings
+- **admins** - Admin accounts
 
-## 🚀 Production Deployment
+## 🌐 Deployment
 
-### Before Deploying:
-1. **Change default admin password**
-2. **Set secure SESSION_SECRET in .env**
-3. **Configure proper email service**
-4. **Use HTTPS (set secure: true in session config)**
-5. **Set up proper database backups**
-6. **Consider migrating to PostgreSQL/MySQL for production**
-7. **Add rate limiting for API endpoints**
-8. **Set up proper logging**
+### Deploy on Render (Free)
+1. Push to GitHub
+2. Go to [render.com](https://render.com)
+3. Create new Web Service
+4. Connect your GitHub repo
+5. Set Build command: `cd notes-hub/backend && npm install`
+6. Set Start command: `cd notes-hub/backend && npm start`
+7. Deploy!
 
-### Deployment Options:
-- **Heroku:** Easy deployment with free tier
-- **DigitalOcean:** VPS hosting
-- **AWS:** EC2 or Elastic Beanstalk
-- **Vercel/Netlify:** For static files (need separate backend host)
+### Deploy on Railway
+1. Go to [railway.app](https://railway.app)
+2. Create new project from GitHub
+3. Select your Notes-Hub repository
+4. Railway auto-configures Node.js
+5. Deploy!
+
+## 📝 Default Admin Credentials
+
+**⚠️ Change these in production!**
+- Username: `admin`
+- Password: `admin123`
 
 ## 🐛 Troubleshooting
 
-### Server won't start
-- Check if port 3000 is available
-- Run `npm install` to ensure dependencies are installed
-- Check for syntax errors in console
+### Backend not responding?
+```bash
+# Check if port 3001 is in use
+netstat -ano | findstr :3001
 
-### Email not sending
-- Verify email credentials in .env
-- Check if 2FA is enabled for Gmail
-- Use App Password instead of regular password
-- Check console for email logs (fallback mode)
-
-### Database errors
-- Delete `scholarship.db` and restart server
-- Ensure write permissions in directory
-
-### File upload fails
-- Check file is PDF format
-- Ensure file size is under 5MB
-- Verify `uploads/` directory exists and has write permissions
-
-## 📝 Development
-
-### Run in Development Mode
-```powershell
-npm install -g nodemon
-npm run dev
+# Kill the process if needed
+taskkill /PID <PID> /F
 ```
 
-This will auto-restart the server on file changes.
+### Frontend can't reach backend?
+- Check API_BASE in `frontend/js/config.js`
+- Ensure backend is running on port 3001
+- Check CORS configuration
 
-### Testing
-1. Submit test applications via the form
-2. Login to admin panel
-3. Test all admin operations
-4. Check email logs in console
+### Database errors?
+- Restart the backend server
+- Database auto-creates on first run
 
-## 🤝 Support
+## 📖 Documentation
 
-For issues or questions:
-1. Check the troubleshooting section
-2. Review console logs for errors
-3. Ensure all dependencies are installed
-4. Verify Node.js version is 14+
+- [Admin Guide](notes-hub/ADMIN_GUIDE.md) - Detailed admin panel features
+- [API Documentation](API_DOCUMENTATION.md) - Complete API reference
+
+## 🤝 Contributing
+
+Feel free to fork, modify, and improve!
 
 ## 📄 License
 
-MIT License - feel free to use and modify for your needs.
+Open source - free to use and modify
+
+## 👤 Author
+
+**SATHWIK2005-git**
+- GitHub: [SATHWIK2005-git](https://github.com/SATHWIK2005-git)
+- Email: sathwik2k5@gmail.com
 
 ---
 
-**Created:** March 2026  
-**Version:** 1.0.0
-
-## 🎯 Quick Start Summary
-
-```powershell
-# 1. Install dependencies
-npm install
-
-# 2. Start the server
-npm start
-
-# 3. Open in browser
-# Applicant form: http://localhost:3000/index.html
-# Admin panel: http://localhost:3000/admin.html
-# Login: admin / admin123
-```
-
-That's it! Your scholarship portal is ready to use! 🎉
+**Made with ❤️ for students & educators**
