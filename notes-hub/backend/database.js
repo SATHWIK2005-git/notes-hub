@@ -3,7 +3,9 @@ const bcrypt = require('bcrypt');
 const path = require('path');
 
 // Use the shared database in the parent directory
-const dbPath = path.join(__dirname, '../../scholarship.db');
+const dbPath = process.env.VERCEL
+    ? path.join('/tmp', 'scholarship.db')
+    : path.join(__dirname, '../../scholarship.db');
 let db;
 
 // Initialize database
