@@ -1,26 +1,19 @@
 {
-  "builds": [
+  "buildCommand": "echo 'Build complete'",
+  "outputDirectory": ".",
+  "functions": {
+    "notes-hub/backend/server.js": {
+      "runtime": "nodejs18.x"
+    }
+  },
+  "rewrites": [
     {
-      "src": "notes-hub/backend/server.js",
-      "use": "@vercel/node"
+      "source": "/api/:path*",
+      "destination": "/notes-hub/backend/server.js"
     },
     {
-      "src": "notes-hub/frontend",
-      "use": "@vercel/static-build",
-      "config": { "distDir": "." }
+      "source": "/:path((?!api).*)*",
+      "destination": "/notes-hub/frontend/index.html"
     }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "notes-hub/backend/server.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "notes-hub/frontend/$1"
-    }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }
