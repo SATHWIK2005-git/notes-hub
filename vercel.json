@@ -1,19 +1,34 @@
 {
-  "buildCommand": "echo 'Build complete'",
-  "outputDirectory": ".",
-  "functions": {
-    "notes-hub/backend/server.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
-  "rewrites": [
+  "version": 2,
+  "builds": [
     {
-      "source": "/api/:path*",
-      "destination": "/notes-hub/backend/server.js"
+      "src": "server.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
     },
     {
-      "source": "/:path((?!api).*)*",
-      "destination": "/notes-hub/frontend/index.html"
+      "src": "notes-hub/frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server.js"
+    },
+    {
+      "src": "/uploads/(.*)",
+      "dest": "uploads/$1"
+    },
+    {
+      "src": "/(.*\\.html|.*\\.css|.*\\.js|.*\\.png|.*\\.jpg|.*\\.svg|.*\\.ico)",
+      "dest": "notes-hub/frontend/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
     }
   ]
 }

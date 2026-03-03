@@ -1,7 +1,15 @@
 // Notes Hub Frontend Configuration
+// Detect if running locally or on deployed server
+const getApiBaseUrl = () => {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return 'http://localhost:3001';
+    }
+    return window.location.origin; // Use the current domain on production
+};
+
 const CONFIG = {
     // Backend API URL
-    API_BASE_URL: 'http://localhost:3001',
+    API_BASE_URL: getApiBaseUrl(),
     
     // API Endpoints
     API: {
