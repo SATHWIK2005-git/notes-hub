@@ -1,0 +1,26 @@
+{
+  "builds": [
+    {
+      "src": "notes-hub/backend/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "notes-hub/frontend",
+      "use": "@vercel/static-build",
+      "config": { "distDir": "." }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "notes-hub/backend/server.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "notes-hub/frontend/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
